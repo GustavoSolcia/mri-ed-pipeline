@@ -1,0 +1,11 @@
+*.egg-info
+
+*.svg
+*.pdf
+*.phantom
+*.seq
+*.mat
+*.swp
+*.nii
+*.nii.gz
+*.pyc

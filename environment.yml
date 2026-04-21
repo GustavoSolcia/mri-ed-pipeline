@@ -1,0 +1,14 @@
+name: mri_ed
+dependencies:
+  - python=3.14.2
+  - pytest=9.0.2
+  - matplotlib=3.10.8
+  - pandas=3.0.0
+  - seaborn=0.13.2
+  - mat73=0.65
+  - pip=25.3
+  - pip:
+    - pypulseq==1.4.2
+    - pyyaml==6.0.3
+    - nibabel==5.3.3
+    - --editable .
