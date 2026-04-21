@@ -94,7 +94,7 @@ the pipeline individually.
 ## Project structure
 
 ```
-mri-simulation-dev
+mri-ed-pipeline
 ├── config                  <- Configuration files (e.g. sequences and paths)
 ├── data                    <- Where data will be saved at the end of the runs
 ├── environment.yml
