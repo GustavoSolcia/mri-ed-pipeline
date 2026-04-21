@@ -19,7 +19,7 @@ To clone the repository you can run the following command
 line in your terminal:
 
 ```
-git clone https://github.com/GustavoSolcia/mri-simulation-dev.git
+git clone https://github.com/GustavoSolcia/mri-ed-pipeline.git
 ```
 
 If you are not familiar with working on a terminal or git, we 
