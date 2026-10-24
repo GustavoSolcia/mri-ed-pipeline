@@ -1,7 +1,0 @@
-n_rep: 1
-n_echo: 10
-n_samples: 1024
-adc_dur: 200.0e-3
-rf_dur: 50.0e-6
-tr: 12
-te: 10.0e-3
