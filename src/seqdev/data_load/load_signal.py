@@ -2,8 +2,8 @@
 
 import pathlib
 
-import mat73
 import numpy as np
+from scipy.io import loadmat
 
 
 def load_signal_mat(
@@ -24,14 +24,14 @@ def load_signal_mat(
             and magnitude data.
     """
 
-    signal_mat = mat73.loadmat(path / f"{sequence}.mat")
+    signal_mat = loadmat(path / f"{sequence}.mat")
 
     t = signal_mat["adc_sampling_times"]
 
     signal_complex = signal_mat["raw"][:, 0, 0]
 
     signal = {
-        "t": t,
+        "t": t.flatten(),
         "real": np.real(signal_complex),
         "imag": np.imag(signal_complex),
         "mag": np.abs(signal_complex)
