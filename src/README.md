@@ -22,10 +22,10 @@ of open science project. Please, take a look in the KomaMRI
  [Documentation](https://juliahealth.org/KomaMRI.jl/stable/) and 
 [Paper](https://doi.org/10.1002/mrm.29635).
 
-For setting up KomaMRI, you need to first install [Julia](https://julialang.org/). 
-After having the Julia language installed in you computer you just need to open 
-Julia by typing `julia` in you terminal and them also type `] add KomaMRI`. 
-That's it. If you want to run something with a GPU, you also type `add CUDA`. 
+In this project KomaMRI is called from Python with juliacall. The Julia
+dependencies are listed in `seqdev/juliapkg.json` and are installed
+automatically on the first run, so you don't need to set up Julia by hand.
+When running with `--backend gpu`, CUDA is added on the first run.
 For AMDGPU support, please read the KomaMRI documentation.
 
 ## Writing sequences
@@ -77,11 +77,7 @@ class AmazingSequence(BaseSequence):
         ....
 ```
 
-After writing your sequence, make sure you created a yaml file named
-```amazing_sequence.yml``` with all the necessary parameters to run
-the sequence.
-
-Finally, you can go to the sequence map dictionary inside the 
+After writing your sequence, go to the sequence map dictionary inside the 
 ```pulse_sequence_writer.py``` and add the sequence you just created.
 
 ```
@@ -94,13 +90,35 @@ sequence_map = {
     "se_ms_broken": SpinEchoMSB(),
     "gre_2d": GradientEcho2D()
 }
-```
-
-After these steps you can pass the amazing_sequence to the pipeline
-sequence argument
 
 ```
-bash run_experiment.sh -s amazing_sequence -p brain
+Then, create an experiment configuration file, e.g.
+```experiments/amazing_sequence/amazing_sequence_brain.yml```, with
+`sequence.type` matching the key in the sequence map and all the parameters
+your sequence needs:
+
+```
+scanner:
+  field: 3
+  max_grad: 32
+  max_slew: 130
+  grad_raster_time: 10.0e-6
+  rf_ringdown_time: 20.0e-6
+  rf_dead_time: 100.0e-6
+
+sequence:
+  type: amazing_sequence
+  # Your sequence parameters go here
+
+phantom:
+  type: brain
+  off_resonance: 0
+```
+
+After these steps you can run your experiment:
+
+```
+bash run_experiment.sh -e amazing_sequence -r amazing_sequence_brain
 ```
 
 ## Creating reconstructions
