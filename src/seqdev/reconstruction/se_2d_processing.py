@@ -45,6 +45,8 @@ class SpinEcho2DProcessing(BaseProcessing):
                 data.
         """
 
+        (path / "nii").mkdir(parents=True, exist_ok=True)
+
         kspace = build_2d_kspace(
             self.signal["real"],
             self.signal["imag"],

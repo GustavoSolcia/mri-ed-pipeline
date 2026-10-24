@@ -41,8 +41,11 @@ class SpinEcho1DProcessing(BaseProcessing):
                 data.
         """
 
+        (path / "figures" / "svg").mkdir(parents=True, exist_ok=True)
+        (path / "figures" / "pdf").mkdir(parents=True, exist_ok=True)
+
         plot_se_decay(
             self.signal["t"],
             self.signal["mag"],
-            path.parent / "figures"
+            path / "figures"
         )
