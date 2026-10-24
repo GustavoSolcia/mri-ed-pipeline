@@ -118,6 +118,7 @@ class GradientEcho2D(BaseSequence):
             - calc_duration(gz)
             - calc_duration(gz_reph)
             - calc_duration(gy_phase)
+            - te_delay
             - calc_duration(gx_pre)
             - calc_duration(gx)
         )

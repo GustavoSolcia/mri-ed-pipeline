@@ -74,7 +74,6 @@ class FreeInductionDecay(BaseSequence):
         adc = make_adc(
             num_samples=sequence_parameters["n_samples"],
             dwell=dwelltime_us,
-            delay=calc_duration(t_delay)
         )
 
         tr_delay = (
