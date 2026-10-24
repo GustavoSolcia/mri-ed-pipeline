@@ -110,15 +110,18 @@ class SpinEcho2D(BaseSequence):
 
         te_delay_1 = (
             sequence_parameters["te"] / 2
-            - calc_duration(rf_90) / 2
+            - rf_90.delay
+            - rf_90.shape_dur / 2
             - calc_duration(gx_pre)
-            - calc_duration(rf_180) / 2
+            - rf_180.delay
+            - rf_180.shape_dur / 2
         )
         te_delay_1 = self._round_delay(te_delay_1, system.grad_raster_time)
 
         te_delay_2 = (
             sequence_parameters["te"] / 2
-            - calc_duration(rf_180) / 2
+            - rf_180.delay
+            - rf_180.shape_dur / 2
             - calc_duration(gx) / 2
         )
         te_delay_2 = self._round_delay(te_delay_2, system.grad_raster_time)
@@ -127,7 +130,9 @@ class SpinEcho2D(BaseSequence):
             sequence_parameters["tr"]
             - calc_duration(rf_90)
             - calc_duration(gx_pre)
+            - te_delay_1
             - calc_duration(rf_180)
+            - te_delay_2
             - calc_duration(gx)
         )
         tr_delay = self._round_delay(tr_delay, system.grad_raster_time)

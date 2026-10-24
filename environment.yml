@@ -11,4 +11,5 @@ dependencies:
     - pypulseq==1.4.2
     - pyyaml==6.0.3
     - nibabel==5.3.3
+    - juliacall==0.9.35
     - --editable .

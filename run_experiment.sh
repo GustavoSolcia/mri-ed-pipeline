@@ -1,58 +1,72 @@
 #!/bin/bash
 
-VALID_ARGS=$(getopt -o s:p: --long sequence:,phantom: -- "$@")
+set -euo pipefail
+
+usage() {
+ echo "Usage: $(basename "$0") -e|--experiment <experiment_name> -r|--run <run_name>" \
+      "[-b|--backend <cpu|gpu>] [-t|--threads <n>]"
+}
+
+EXP=""
+RUN=""
+BACKEND="cpu"
+THREADS="$(nproc 2>/dev/null || echo 4)"
+
+VALID_ARGS=$(getopt -o e:r:b:t:h --long experiment:,run:,backend:,threads:,help -- "$@")
 if [[ $? -ne 0 ]]; then
+    usage
     exit 1;
 fi
 
 eval set -- "$VALID_ARGS"
 while [ : ]; do
-  case "$1" in
-    -s | --sequence)
-        SEQ=$2
-        shift 2
-        ;;
-    -p | --phantom)
-        PHANTOM=$2
-        shift 2
-        ;;
-    ?|h)
-      echo "Usage: $(basename $0) [-s | --sequence <sequence_name>]"
-      exit 1
-      ;;
-    --) shift; 
-        break 
-        ;;
-  esac
+    case "$1" in
+        -e | --experiment)
+         EXP=$2
+         shift 2
+         ;;
+        -r | --run)
+         RUN=$2
+         shift 2
+         ;;
+        -b | --backend)
+         BACKEND=$2
+         shift 2
+         ;;
+        -t | --threads)
+         THREADS=$2
+         shift 2
+         ;;
+        -h | --help)
+         usage
+         exit 0
+         ;;
+        --) shift;
+         break
+         ;;
+        *)
+         usage
+         exit 1
+         ;;
+    esac
 done
 
-# Making sure all data and figure folders exists
-# in case that the repository was cloned.
-mkdir -p data/nii
-mkdir -p data/phantom
-mkdir -p data/sequence
-mkdir -p data/simulation
-mkdir -p figures/pdf
-mkdir -p figures/svg
-
-# Creates the phantom if you don't have it
-if [ "$PHANTOM" = "water_spheres" ]; then
-    if [ ! -f data/phantom/water_spheres.phantom ]; then
-        echo "Creating phantom..."
-        julia --project=. src/phantom/make_water_spheres.jl
-    fi
+if [[ -z "$EXP" || -z "$RUN" ]]; then
+    echo "Error: --experiment and --run are required."
+    usage
+    exit 1
 fi
 
-echo "Writing sequence..."
-python3 src/write_sequence.py --sequence $SEQ
+CONFIG="experiments/$EXP/$RUN.yml"
+if [[ ! -f "$CONFIG" ]]; then
+    echo "Error: configuration file not found: $CONFIG"
+    exit 1
+fi
 
-echo "Running simulation..."
-julia --project=. src/simulate.jl \
-    data/phantom/water_spheres.phantom \
-    data/sequence/$SEQ.seq \
-    data/simulation/$SEQ.mat \
-    $SEQ \
-    $PHANTOM
+export PYTHON_JULIACALL_THREADS="$THREADS"
+[[ "$THREADS" -gt 1 ]] && export PYTHON_JULIACALL_HANDLE_SIGNALS=yes
 
-echo "Running post-processing..."
-python3 src/post_process.py --sequence $SEQ --phantom $PHANTOM
+echo "Running simulation experiment..."
+python3 src/run_simulation.py \
+ --experiment "$EXP" --run "$RUN" \
+ --backend "$BACKEND" --threads "$THREADS"

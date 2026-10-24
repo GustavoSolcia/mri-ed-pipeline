@@ -41,10 +41,13 @@ class FreeInductionDecayProcessing(BaseProcessing):
                 data.
         """
 
+        (path / "figures" / "svg").mkdir(parents=True, exist_ok=True)
+        (path / "figures" / "pdf").mkdir(parents=True, exist_ok=True)
+
         plot_fid_decay(
             self.signal["t"],
             self.signal["mag"],
             self.signal["real"],
             self.signal["imag"],
-            path.parent / "figures"
+            path / "figures"
         )
